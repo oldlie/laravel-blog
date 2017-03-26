@@ -1,8 +1,22 @@
-#### 基于Laravel和AdminLTE的CMS
+## 基于Laravel和AdminLTE的CMS
 
 当前阶段参考 [博客系列](http://laravelacademy.org/tutorials/blog)
 
+#### 解決博客系列：4、创建Markdown服务 SmartyPants 找不到文件的問題 
+[基于 Laravel 开发博客应用系列 —— 从测试开始（二）：使用Gulp实现自动化测试](http://laravelacademy.org/post/2249.html)
+ 
+ > 修改 
+ 
+ ```composer require “michelf/php-smartypants=1.6.0-beta1”```
+ 
+ > 為
+ 
+ ```composer require “michelf/php-smartypants=1.8.1```
+ 
+ 造成這個問題的原因應該是beta版本SmartyPants自身的問題。可以明顯看到這個版本的命名空間大小寫不統一。
 
+#### 解決 Nginx 環境下404錯誤
+參看文檔 [laravel配置路由出现404解决办法](http://blog.csdn.net/sunxiang_520/article/details/51633837)
 
 ## Laravel PHP Framework
 
