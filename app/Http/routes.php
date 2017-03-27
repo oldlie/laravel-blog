@@ -17,8 +17,22 @@ http://blog.csdn.net/sunxiang_520/article/details/51633837
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/blog');
 });
 
 Route::get('blog', 'BlogController@index');
 Route::get('blog/{slug}', 'BlogController@showPost');
+
+Route::get('admin', function () {
+    return redirect('/admin/post');
+});
+
+$router->group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
+    resource('admin/post', 'PostController');
+    resource('admin/tag', 'TagController');
+    get('admin/upload', 'UploadController@index');
+});
+
+Route::get('/auth/login', 'Auth\AuthController@getLogin');
+Route::post('/auth/login', 'Auth\AuthController@postLogin');
+Route::get('/auth/logout', 'Auth\AuthController@getLogout');
