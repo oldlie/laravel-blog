@@ -41,5 +41,24 @@
                 <div class="title">Laravel 5</div>
             </div>
         </div>
+        <script type="text/javascript">
+var TemplateComplier = (function () {
+    function TemplateComplier() {
+        this.evalExpr = /<%=(.+?)%>/g;
+        this.expr = /<%([\s\S]+?)%>/g;
+    }
+    TemplateComplier.prototype.complie = function (template, data) {
+        template = template
+            .replace(this.evalExpr, '`);\n echo( $1 );\n echo(`')
+            .replace(this.expr, '`);\n $1  echo(`');
+        template = 'echo(`' + template + '`);';
+
+        var script = "(function parse(data){\n    var output = [];\n\n    function echo(html){\n      output.push(html);\n    }\n\n    " + template + "\n\n    return output.join('');\n  })";
+        var parse = eval(script);
+        return parse(data);
+    };
+    return TemplateComplier;
+}());
+        </script>
     </body>
 </html>
