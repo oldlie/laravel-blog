@@ -107,4 +107,22 @@ class UploadController extends Controller
             ->back()
             ->withErrors([$error]);
     }
+
+    public function ajaxUploadFile(UploadFileRequest $request)
+    {
+        $file = $_FILES['file'];
+        $fileName = $request->get('file_name');
+        $fileName = $fileName ?: $file['name'];
+        $path = str_finish($request->get('folder'), '/') . $fileName;
+        $content = File::get($file['tmp_name']);
+
+        $result = $this->manager->saveFile($path, $content);
+
+        if ($result === true) {
+            return response()->json(["success" => 1]);
+        }
+
+        $error = $result ? : "An error occurred uploading file.";
+        return response()->json(["success" => 0, "message" => $error]);
+    }
 }

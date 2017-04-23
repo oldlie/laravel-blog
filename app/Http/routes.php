@@ -11,7 +11,7 @@
 |
 
 如果使用nginx配置路由出现404解决办法：
-在location里面加上　try_files $uri $uri/ /index.php?$query_string;
+在location里面加上　try_files $uri $uri/ /index.blade.php?$query_string;
 http://blog.csdn.net/sunxiang_520/article/details/51633837
 */
 
@@ -24,13 +24,22 @@ Route::get('blog', 'BlogController@index');
 Route::get('blog/{slug}', 'BlogController@showPost');
 
 Route::get('admin', function () {
-    return redirect('/admin/post');
+    return redirect('/admin/dashboard');
 });
 
 $router->group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
+    get('admin', function () {
+        return redirect('/admin/dashboard');
+    });
+    get('admin/dashboard', 'DashboardController@index');
     resource('admin/post', 'PostController');
     resource('admin/tag', 'TagController');
+
+    resource('admin/category', 'CategoryController');
+    get('admin/category/parent/{id}', 'CategoryController@listCategory');
+
     get('admin/upload', 'UploadController@index');
+    post('admin/upload/ajax/file', 'UploadController@ajaxUploadFile');
     post('admin/upload/file', 'UploadController@uploadFile');
     delete('admin/upload/file', 'UploadController@deleteFile');
     post('admin/upload/folder', 'UploadController@createFolder');
