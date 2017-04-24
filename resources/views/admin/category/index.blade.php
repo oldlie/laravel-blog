@@ -16,6 +16,13 @@
     <!-- Main content -->
     <section class="content">
         <div class="row">
+            <div class="col-sm-12">
+                @include('admin.partials.errors')
+                @include('admin.partials.success')
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-3">
 
                 <a href="{{url('admin/category/create')}}" class="btn btn-primary btn-block margin-bottom">创建分类</a>
@@ -30,19 +37,24 @@
                         </div>
                     </div>
                     <div class="box-body no-padding">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li class="active"><a href="#"><i class="fa fa-inbox"></i> Inbox
-                                    <span class="label label-primary pull-right">12</span></a></li>
-                            <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
-                            <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
-                            <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a>
-                            </li>
-                            <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li>
-                        </ul>
+                        <div style="padding: 10px 3px;"  id="categoriesList"></div>
                     </div>
                     <!-- /.box-body -->
                 </div>
             </div>
         </div>
     </section>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript" src="{{asset('assets/js/category.js')}}"></script>
+    <script type="text/javascript">
+        var category = new Category();
+        category.url = '{{url('admin/category/parent')}}';
+
+        $(function() {
+            category.currentId = 0;
+            category.render('#categoriesList');
+        });
+    </script>
 @endsection

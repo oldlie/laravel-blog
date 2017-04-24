@@ -26,58 +26,23 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" method="post" action="{{url('admin/category')}}">
                         <div class="box-body">
 
-                            <div class="form-group">
-                                <label for="inputName" class="col-sm-2 control-label">栏目名称：</label>
-
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputName" placeholder="栏目名称">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    @include('admin.partials.errors')
                                 </div>
                             </div>
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                            <div class="form-group">
-                                <label for="inputParentID" class="col-sm-2 control-label">上级栏目：</label>
-
-                                <div class="col-sm-10">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <button class="btn btn-default" type="button"
-                                                    data-toggle="modal" data-target="#selectParentIDModal"
-                                                    style="width: 100%;"> 选择上一级栏目</button>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <input type="text" readonly="readonly" class="form-control" id="inputParentCategory">
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="inputParentID">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inputImage" class="col-sm-2 control-label">栏目题图：</label>
-
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="fileImage">
-                                    <div id="fileImageProgressBar" class="progress hide">
-                                        <div class="progress-bar progress-bar-primary progress-bar-striped active"
-                                             role="progressbar"
-                                             aria-valuenow="0" aria-valuemin="0"
-                                             aria-valuemax="100" style="width: 100%">
-                                            <span class="sr-only">0% Complete (success)</span>
-                                        </div>
-                                    </div>
-                                    <img id="imgCategory" class="img img-thumbnail">
-                                    <input type="hidden" class="form-control" id="inputImage" placeholder="栏目题图">
-                                </div>
-                            </div>
+                        @include('admin.category._form')
 
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer">
                             <a href="{{url('admin/category')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> 返回栏目列表</a>
-                            <button type="button" class="btn btn-primary pull-right"><i class="fa fa-save"></i> 保存</button>
+                            <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-save"></i> 保存</button>
                         </div>
                         <!-- /.box-footer -->
                     </form>
@@ -101,21 +66,8 @@
                     <h4 class="modal-title">选择上一级栏目</h4>
                 </div>
                 <div class="modal-body" id="categoriesList">
-                    <div class="btn-group" style="width: 100%;">
-                        <button type="button" class="btn btn-ms btn-default"><i class="fa fa-angle-double-left"></i> </button>
-                        <button style="width: 90%;" type="button" class="btn btn-default" disabled>根目录</button>
-                    </div>
-                    <div class="btn-group" style="width: 100%;">
-                        <button style="width: 90%;" type="button" class="btn btn-ms btn-default text-left"></i> 日记</button>
-                        <button type="button" class="btn btn-ms btn-default"><i class="fa fa-angle-double-right"></i> </button>
-                    </div>
-                    <div class="btn-group" style="width: 100%;">
-                        <button style="width: 90%;" type="button" class="btn btn-ms btn-default text-left"><i class="fa fa-check"></i> 文摘</button>
-                        <button type="button" class="btn btn-ms btn-default"><i class="fa fa-angle-double-right"></i> </button>
-                    </div>
-                    <div class="btn-group" style="width: 100%;">
-                        <button style="width: 90%;" type="button" class="btn btn-ms btn-default text-left"><i class="fa fa-check"></i> 照片</button>
-                        <button type="button" class="btn btn-ms btn-default"><i class="fa fa-angle-double-right"></i> </button>
+                    <div class="overlay">
+                        <i class="fa fa-spinner fa-spin"></i>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -130,61 +82,12 @@
 @endsection
 
 @section('scripts')
+    <script type="text/javascript" src="{{asset('assets/js/category.js')}}"></script>
 <script type="text/javascript">
 
-    var Category = (function () {
-
-        function Category() {
-
-            this.parentId = 1;
-            this.currentId = 1;
-        }
-
-        var core = new Core();
-        var tempHtml = [];
-        var template = {
-            back : ['<div class="btn-group" style="width: 100%;">',
-                '<button type="button" class="btn btn-ms btn-default" ${disabled} data-id=${id}><i class="fa fa-angle-double-left"></i> </button>',
-                '<button style="width: 90%;" type="button" class="btn btn-default" disabled>上层栏目</button>',
-                '</div>'
-            ].join(''),
-            next : ['<div class="btn-group" style="width: 100%;">',
-                '<button style="width: 90%;" type="button" class="btn btn-ms btn-default text-left" data-id="${id}" onclick="category.select()">${text}</button>',
-                '<button type="button" class="btn btn-ms btn-default"  ${disabled}><i class="fa fa-angle-double-right"></i> </button>',
-                '</div>'
-            ].join('')
-        };
-
-        Category.prototype.draw = function (list) {
-            tempHtml = [];
-
-            if (this.currentId > 1) {
-                tempHtml.push(core.html(template.back, {id: this.parentId}));
-            }
-
-            for (var i = 0; i < list.length; i++) {
-                var item = list[i];
-                var disabled = '';
-                if (item.children <= 0) {
-                    disabled = 'disabled';
-                }
-                tempHtml.push(core.html(template.next, {id: item.id, text: item.name, disabled: disabled}));
-            }
-            return tempHtml.join('');
-        };
-
-        Category.prototype.select = function () {
-            $('#inputParentID').val($(event.target).attr('data-id'));
-            $('#inputParentCategory').val($(event.target).text());
-            $('#selectParentIDModal').modal('hide');
-        };
-        return Category;
-    })();
-
-    var core = new Core();
-    var parentId = 1, currentId = 1, url = '', i = 0;
     var category = new Category();
-
+    category.url = '{{url('admin/category/parent')}}';
+    var parentId = 1, currentId = 1, url = '', i = 0;
 
     $(document).on('change', '#fileImage', function () {
         if (window.FormData) {
@@ -219,12 +122,8 @@
     
     $('#selectParentIDModal').on('show.bs.modal', function (event) {
         console.log('open modal.');
-        url = "{{url('admin/category/parent')}}" + "/" + parentId.toString();
-        $.get(url, function (list) {
-            if (list.length > 0) {
-                $('#categoriesList').html(category.draw(list));
-            }
-        }, "json");
+        category.currentId = 0;
+        category.render('#categoriesList');
     });
 
 

@@ -8,8 +8,8 @@ var Core = (function () {
 
     Core.prototype.html = function (template, keyValues) {
         for (key in keyValues) {
-            const re = '\$\{' + key + '\}';
-            template = template.replace(re, keyValues[key]);
+            var re = '\\$\{' + key + '\}';
+            template = template.replace(new RegExp(re, "g"), keyValues[key]);
         }
         return template;
     };

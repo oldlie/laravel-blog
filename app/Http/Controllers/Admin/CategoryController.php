@@ -6,6 +6,7 @@ use App\Categories;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Requests\CategoryCreateRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 
@@ -13,10 +14,10 @@ class CategoryController extends Controller
 {
     protected $fields = [
         'name' => '',
-        'parent_id' => 0,
+        'parent_id' => 1,
+        'p_name' => '顶级栏目',
         'image' => '',
-        'order' => '',
-        'page_image' => '',
+        'order' => 0,
     ];
 
     /**
@@ -46,13 +47,23 @@ class CategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CategoryCreateRequest $request
      */
-    public function store(Request $request)
+    public function store(CategoryCreateRequest $request)
     {
-        //
+        $cate = new Categories();
+        foreach (array_keys($this->fields) as $field) {
+            $cate->$field = $request->get($field);
+        }
+        $cate->save();
+
+        $parent_cate = Categories::findOrFail($cate->parent_id);
+        if ($parent_cate) {
+            $parent_cate->children++;
+            $parent_cate->save();
+        }
+
+        return redirect('/admin/category')->withSuccess("分类 '$cate->name' 已经保存.");
     }
 
     /**
@@ -102,7 +113,12 @@ class CategoryController extends Controller
 
     public function listCategory($id)
     {
-        $children = Categories::where('id', $id)->get();
-        return \response()->json($children);
+        try {
+            $category = Categories::where('id', $id)->first();
+        } catch(NotFoundHttpException $e) {
+            $category = "";
+        }
+        $children = Categories::where('parent_id', (int)$id)->get();
+        return \response()->json(["self" => $category, "list" => $children]);
     }
 }
