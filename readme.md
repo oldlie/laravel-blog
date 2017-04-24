@@ -7,12 +7,13 @@
 gulp 和 bower 这俩货也要安装
 ```
 npm install -g gulp
-
+npm install gulp-rename --save
 npm install -g bower
 ```
 
 然后执行  ``` composer updat ``` 命令安装 PHP 相关依赖。
-
+因为要修改数据库还要执行 ``` composer require "doctrine/dbal" ``` 安装相关依赖
+----
 
 当前阶段参考 [博客系列](http://laravelacademy.org/tutorials/blog)
 
