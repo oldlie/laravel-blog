@@ -1,5 +1,19 @@
 ## 基于Laravel和AdminLTE的CMS
 
+
+### 安装和使用
+将代码 clone 到本地之后先执行 ```npm install``` 命令安装相关依赖
+
+gulp 和 bower 这俩货也要安装
+```
+npm install -g gulp
+
+npm install -g bower
+```
+
+然后执行  ``` composer updat ``` 命令安装 PHP 相关依赖。
+
+
 当前阶段参考 [博客系列](http://laravelacademy.org/tutorials/blog)
 
 #### 解決博客系列：4、创建Markdown服务 SmartyPants 找不到文件的問題 
