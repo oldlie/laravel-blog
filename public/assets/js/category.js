@@ -5,6 +5,7 @@
 var Category = (function () {
 
     function Category() {
+        this.category = this;
         this.parentId = 0;
         this.currentId = 1;
         this.url = "";
@@ -14,13 +15,13 @@ var Category = (function () {
     var tempHtml = [];
     var template = {
         back : ['<div class="btn-group" style="width: 100%; min-width: 300px">',
-            '<button type="button" class="btn btn-ms btn-default" data-id="{id}" onclick="category.go2Child()"><i class="fa fa-angle-double-left"></i> </button>',
-            '<button type="button" class="btn btn-default" style="width: 220px" data-id="${id}" onclick="category.select()">${text}</button>',
+            '<button type="button" class="btn btn-ms btn-default back-to-parent" data-id="{id}" ><i class="fa fa-angle-double-left"></i> </button>',
+            '<button type="button" class="btn btn-default select-category" style="width: 220px" data-id="${id}" >${text}</button>',
             '</div>'
         ].join(''),
         next : ['<div class="btn-group " style="width: 100%; min-width: 300px" >',
-            '<button type="button" class="btn btn-ms btn-default " style="width: 220px" data-id="${id}" onclick="category.select()">${text}</button>',
-            '<button type="button" class="btn btn-ms btn-default " data-id="${id}"  ${disabled} onclick="category.go2Child()">',
+            '<button type="button" class="btn btn-ms btn-default select-category " style="width: 220px" data-id="${id}">${text}</button>',
+            '<button type="button" class="btn btn-ms btn-default go-to-children " data-id="${id}"  ${disabled} >',
             '   <i class="fa fa-angle-double-right"></i>',
             ' </button>',
             '</div>'
@@ -53,24 +54,6 @@ var Category = (function () {
             tempHtml.push(core.html(template.next, {id: item.id, text: item.name, disabled: disabled}));
         }
         return tempHtml.join('');
-    };
-
-    Category.prototype.select = function () {
-        $('#inputParentID').val($(event.target).attr('data-id'));
-        $('#inputParentCategory').val($(event.target).text());
-        $('#selectParentIDModal').modal('hide');
-    };
-
-    Category.prototype.go2Child = function() {
-        this.currentId = $(event.target).attr('data-id');
-        this.render('#categoriesList');
-        event.preventDefault();
-    };
-
-    Category.prototype.go2Parent = function() {
-        this.currentId = $(event.target).attr('data-id');
-        this.render('#categoriesList');
-        event.preventDefault();
     };
 
     return Category;

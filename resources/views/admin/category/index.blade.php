@@ -23,7 +23,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-xs-12 col-sm-5 col-md-4">
 
                 <a href="{{url('admin/category/create')}}" class="btn btn-primary btn-block margin-bottom">创建分类</a>
 
@@ -42,6 +42,36 @@
                     <!-- /.box-body -->
                 </div>
             </div>
+
+            <div class="col-xs-12 col-sm-7 col-md-8">
+                <div class="box box-primary">
+
+                    <div class="box-header with-border">
+                        <h3 class="box-title" id="postListTitle">顶级栏目</h3>
+                    </div>
+
+                    <div class="box-body no-padding">
+                        <div class="table-responsive mailbox-messages">
+                            <table class="table table-hover table-striped">
+                                <tbody>
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>
+                                        <div class="btn-group"  style="width: 80px;">
+                                            <button class="btn btn-default btn-xs"><i class="fa fa-eye"></i></button>
+                                            <button class="btn btn-default btn-xs"><i class="fa fa-edit"></i></button>
+                                            <button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 @endsection
@@ -56,5 +86,20 @@
             category.currentId = 0;
             category.render('#categoriesList');
         });
+
+        // region Event: 栏目选择事件
+        $(function () {
+            $(document).on('click', '.back-to-parent', function(){
+                category.currentId = $(this).attr('data-id');
+                category.render('#categoriesList');
+            });
+            $(document).on('click', '.select-category', function() {
+            });
+            $(document).on('click', '.go-to-children', function() {
+                category.currentId = $(this).attr('data-id');
+                category.render('#categoriesList');
+            });
+        });
+        // endregion
     </script>
 @endsection

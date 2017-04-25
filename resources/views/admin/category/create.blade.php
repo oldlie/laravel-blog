@@ -119,6 +119,33 @@
             alert("浏览器不支持上传，请使用Chrome/FireFox/IE10+/360浏览器急速模式。");
         }
     });
+
+    // region Events: 选择父一级的栏目
+    /**
+     * 返回上一级目录
+     */
+    $(document).on('click', '.back-to-parent', function(){
+        category.currentId = $(this).attr('data-id');
+        category.render('#categoriesList');
+    });
+
+    /**
+     * 选择这个目录作为上级目录
+     */
+    $(document).on('click', '.select-category', function() {
+        $('#inputParentID').val($(this).attr('data-id'));
+        $('#inputParentCategory').val($(this).text());
+        $('#selectParentIDModal').modal('hide');
+    });
+
+    /**
+     * 去到它的子栏目
+     */
+    $(document).on('click', '.go-to-children', function() {
+        category.currentId = $(this).attr('data-id');
+        category.render('#categoriesList');
+    });
+    // endregion
     
     $('#selectParentIDModal').on('show.bs.modal', function (event) {
         console.log('open modal.');
