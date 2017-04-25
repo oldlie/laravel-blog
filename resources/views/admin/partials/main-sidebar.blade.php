@@ -28,7 +28,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{url('admin/category')}}"><i class="fa fa-circle-o"></i> 栏目列表</a></li>
-                    <li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> 写文章</a></li>
+                    <li><a href="{{url('admin/post')}}"><i class="fa fa-circle-o"></i> 写文章</a></li>
                 </ul>
             </li>
         </ul>
