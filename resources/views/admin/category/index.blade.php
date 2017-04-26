@@ -29,12 +29,7 @@
 
                 <div class="box box-solid">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Folders</h3>
-
-                        <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                        </div>
+                        <h3 class="box-title">栏目列表</h3>
                     </div>
                     <div class="box-body no-padding">
                         <div style="padding: 10px 3px;"  id="categoriesList"></div>
@@ -83,7 +78,7 @@
         category.url = '{{url('admin/category/parent')}}';
 
         $(function() {
-            category.currentId = 0;
+            category.currentId = 1;
             category.render('#categoriesList');
         });
 
