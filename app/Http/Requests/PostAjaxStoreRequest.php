@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\Request;
-
-class CategoryCreateRequest extends Request
+class PostAjaxStoreRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +22,9 @@ class CategoryCreateRequest extends Request
     public function rules()
     {
         return [
-            "name" => "required | unique:categories,name",
-            "parent_id" => "required",
-            "parent_name" => "required"
+            "slug" => "require | unique:posts,slug",
+            "title" => "require",
+            "content_raw" => "require"
         ];
     }
 }

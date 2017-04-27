@@ -2,13 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Post;
 use Illuminate\Http\Request;
+use Michelf\Markdown;
 
-use App\Http\Requests;
+use App\Http\Requests\PostAjaxStoreRequest;
 use App\Http\Controllers\Controller;
+
 
 class PostController extends Controller
 {
+    protected $postFields = [
+        "slug" => "",
+        "title" => "",
+        "content_raw" => "",
+        "is_draft" => 1,
+    ];
+
+    protected $publishFields = [
+        "author" => "",
+        "publisher" => "",
+        "editor" => "",
+        "proof-reader" => "",
+        "category" => 0,
+        "is_draft" => 0,
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -38,6 +57,17 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //
+    }
+
+    public function ajaxStore(PostAjaxStoreRequest $request)
+    {
+        $post = new Post();
+        foreach (array_keys($this->postFields) as $field) {
+            $post->$field = $request->get($field);
+        }
+        $markdown = new Markdowner();
+        $post->content_html = $markdown->toHTML($post->content_raw);
+
     }
 
     /**

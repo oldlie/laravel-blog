@@ -16,7 +16,7 @@
                         style="width: 100%;"> 选择上一级栏目</button>
             </div>
             <div class="col-sm-8">
-                <input name="p_name" type="text" readonly="readonly" class="form-control" id="inputParentCategory" value="{{$p_name}}">
+                <input name="parent_name" type="text" readonly="readonly" class="form-control" id="inputParentCategory" value="{{$parent_name}}">
             </div>
         </div>
         <input type="hidden" name="parent_id" id="inputParentID" value="{{$parent_id}}">
@@ -37,7 +37,7 @@
             </div>
         </div>
         @if ($image != '')
-            <img id="imgCategory" class="img img-thumbnail" src="{{url('uploads/images/category') . $image}}">
+            <img id="imgCategory" class="img img-thumbnail" src="{{url('uploads/images/category') . '/' . $image}}">
         @else
             <img id="imgCategory" class="img img-thumbnail">
         @endif
