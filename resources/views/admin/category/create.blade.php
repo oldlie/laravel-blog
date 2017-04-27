@@ -84,7 +84,7 @@
 @section('scripts')
     <script type="text/javascript" src="{{asset('assets/js/category.js')}}"></script>
 <script type="text/javascript">
-
+    var core = new Core();
     var category = new Category();
     category.url = '{{url('admin/category/parent')}}';
     var parentId = 1, currentId = 1, url = '', i = 0;

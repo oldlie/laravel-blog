@@ -45,45 +45,24 @@
       <div class="col-sm-12">
           <div class="box box-primary collapsed-box">
               <div class="box-header with-border box-primary">
-                  <input type="text" class="post-input post-title" placeholder="标题：">
-
-                  <div class="box-tools">
-                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                      </button>
-                  </div>
-              </div>
-
-              <div class="box-body no-padding container-fluid">
-                  <div class="col-sm-12 post-row">
-                      <input type="text" class="post-input" placeholder="副标题">
-                  </div>
-                  <div class="col-sm-12 post-row">
-                      <input type="text" class="post-input" placeholder="作者">
-                  </div>
-                  <div class="col-sm-12 post-row">
-                      <input type="text" class="post-input" placeholder="发布/审核员">
-                  </div>
-                  <div class="col-sm-12 post-row">
-                      <button class="btn btn-default"><i class="fa fa-list"></i> 选择栏目</button>
-                  </div>
-                  <div class="col-sm-12 post-row">
-                      <input class="form-control" type="file" placeholder="题图"/>
-                      <img class="img-thumbnail">
-                  </div>
-
+                  <input id="titleTxt" type="text" class="post-input post-title" placeholder="标题：请只输入数字，字母，汉字以及空格">
+                  <input id="slugTxt" type="text" readonly class="post-input" placeholder="文章 URL，根据标题自动生成">
               </div>
           </div>
       </div>
 
-      <div class="col-xs-12 col-sm-12 col-md-6">
+      <div class="col-xs-12 col-sm-12 col-md-6" id="inputSection">
           <div class="box box-solid">
 
               <div class="box-body no-padding">
                   <div class="btn-group">
-                      <button class="btn btn-sm btn-default"><i class="fa fa-image"></i></button>
-                      <button class="btn btn-sm btn-warning"><i class="fa fa-eraser"></i></button>
-                      <button class="btn btn-sm btn-default"><i class="fa fa-columns"></i></button>
-                      <button class="btn btn-sm btn-primary"><i class="fa fa-save"></i></button>
+                      <button id="appendImageBtn" class="btn btn-sm btn-default" type="button"
+                              data-toggle="modal" data-target="#appendImageModal" >
+                          <i class="fa fa-image"></i>
+                      </button>
+                      <button id="clearContentBtn" class="btn btn-sm btn-warning"><i class="fa fa-eraser"></i></button>
+                      <button id="columnChangeBtn" class="btn btn-sm btn-default"><i class="fa fa-columns"></i></button>
+                      <button class="btn btn-sm btn-primary saveDraftBtn"><i class="fa fa-save"></i></button>
                   </div>
 <textarea id="input">
 # 一级标题
@@ -137,12 +116,12 @@ baz | baz | baz
               <!-- /.box-body -->
           </div>
       </div>
-      <div class="col-xs-12 col-sm-12 col-md-6">
+      <div class="col-xs-12 col-sm-12 col-md-6" id="outputSection">
           <div class="box box-solid">
               <div class="box-body no-padding">
                   <div class="btn-group">
-                      <button class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></button>
-                      <button class="btn btn-sm btn-default"><i class="fa fa-eye"></i></button>
+                      <button id="refreshBtn" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></button>
+                      <button id="previewBtn" class="btn btn-sm btn-default"><i class="fa fa-eye"></i></button>
                   </div>
                   <div class="out-put"></div>
               </div>
@@ -151,22 +130,139 @@ baz | baz | baz
       </div>
 
       <div class="col-sm-12">
-          <button class="btn btn-primary">发布文章</button>
+          <div class="btn-group">
+              <button class="btn btn-default"><i class="fa fa-save"></i> 保存草稿</button>
+              <button class="btn btn-primary">发布文章</button>
+          </div>
       </div>
   </section>
 
+    <div id="call-out"></div>
+@endsection
+
+@section('hidden')
+    <div class="modal" id="appendImageModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">上传图片</h4>
+                </div>
+                <div class="modal-body" >
+                    <div class="col-sm-12">
+                        <input type="file" class="form-control" id="fileImage">
+                        <div id="fileImageProgressBar" class="progress hide">
+                            <div class="progress-bar progress-bar-primary progress-bar-striped active"
+                                 role="progressbar"
+                                 aria-valuenow="0" aria-valuemin="0"
+                                 aria-valuemax="100" style="width: 100%">
+                                <span class="sr-only">0% Complete (success)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
     <script type="text/javascript" src="{{asset('assets/js/markdown.js')}}"></script>
+    <!-- Page Events -->
     <script type="text/javascript">
+        var core = new Core();
+        var date = new Date();
+        var yearMonth = date.getFullYear().toString() + "-" + date.getMonth().toString();
+        var column = 2;
+        var preview = 2;
+        var callOut = new CallOut("#call-out");
+
+        $(document).on('keyup', '#titleTxt', function () {
+            $('#slugTxt').val($(this).val().replace(/\s/g, "-"));
+        });
+
         $(document).on('keyup', '#input', function (event) {
             var text = $(this).val();
-            console.log($(this).height());
-            console.log($(this).scrollTop());
             $('.out-put').html(markdown.toHTML(text))
                     .scrollTop($(this).scrollTop());
         });
+
+        $(document).on('change', '#fileImage', function(){
+            var name = document.getElementById('fileImage').files[0].name;
+            var progress = $('#fileImageProgressBar').first();
+            var url = "{{url('admin/upload/ajax/file')}}";
+            var formData = new FormData();
+            formData.append('_token', '{{csrf_token()}}')
+            formData.append('file', document.getElementById('fileImage').files[0])
+            formData.append('folder', 'images/posts/' + yearMonth);
+
+            core.uploadFile(url, formData, function (event) {
+                if (event.lengthComputable) {
+                    var percentComplete = Math.round(event.loaded * 100 / event.total);
+                    $(progress).css('width', percentComplete + "%");
+                }
+            }, function (event) {
+                $('#fileImageProgressBar').addClass('hide');
+                var image = "{{url('uploads/images/posts')}}" + "/" + yearMonth + "/" + name;
+                var content = $("#input").val() + "\n![" + name + "](" + image + ")\n";
+                $("#input").val(content);
+                $('#appendImageModal').modal('hide');
+                $('.out-put').html(markdown.toHTML(content))
+                        .scrollTop($(this).scrollTop());
+            });
+        });
+
+        $(document).on('click', '#clearContentBtn', function() {
+            $("#input").val('');
+            $('.out-put').html('');
+        });
+
+        $(document).on('click', '#columnChangeBtn', function() {
+            console.log("hello");
+            if (column == 2) {
+                $('#inputSection').removeClass('col-md-6').addClass('col-md-12');
+                $('#outputSection').addClass('hide');
+                column = 1;
+            } else {
+                $('#inputSection').removeClass('col-md-12').addClass('col-md-6');
+                $('#outputSection').removeClass('hide');
+                column = 2;
+            }
+        });
+
+        $(document).on('click', '#refreshBtn', function() {
+            $('.out-put').html(markdown.toHTML($("#input").val()));
+        });
+
+        $(document).on('click', '#previewBtn', function() {
+            if (preview == 2) {
+                $('#outputSection').removeClass('col-md-6').addClass('col-md-12');
+                $('#inputSection').addClass('hide');
+                preview = 1;
+            } else {
+                $('#outputSection').removeClass('col-md-12').addClass('col-md-6');
+                $('#inputSection').removeClass('hide');
+                preview = 2;
+            }
+        });
+
+        $(document).on('click', '.saveDraftBtn', function() {
+            var title = $('#titleTxt').val();
+            if (title == "") {
+                callOut.warning("保存文字内容之前请输入文章标题。");
+                return void(0);
+            }
+
+        });
+    </script>
+    <script type="text/javascript">
         $(function(){
             $('.out-put').html(markdown.toHTML($('textarea').val()));
         });

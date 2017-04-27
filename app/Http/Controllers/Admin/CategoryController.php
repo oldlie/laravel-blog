@@ -15,7 +15,7 @@ class CategoryController extends Controller
     protected $fields = [
         'name' => '',
         'parent_id' => 1,
-        'p_name' => '顶级栏目',
+        'parent_name' => '顶级栏目',
         'image' => '',
         'order' => 0,
     ];
@@ -59,7 +59,7 @@ class CategoryController extends Controller
 
         $parent_cate = Categories::findOrFail($cate->parent_id);
         if ($parent_cate) {
-            $parent_cate->children++;
+            $parent_cate->child_count++;
             $parent_cate->save();
         }
 
