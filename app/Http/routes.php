@@ -32,7 +32,10 @@ $router->group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
         return redirect('/admin/dashboard');
     });
     get('admin/dashboard', 'DashboardController@index');
+
     resource('admin/post', 'PostController');
+    post('admin/ajax/post/store/{id}', "PostController@ajaxStore");
+
     resource('admin/tag', 'TagController');
 
     resource('admin/category', 'CategoryController');

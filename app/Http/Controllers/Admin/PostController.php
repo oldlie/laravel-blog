@@ -3,20 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Post;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Michelf\Markdown;
+use App\Services\Markdowner;
 
 use App\Http\Requests\PostAjaxStoreRequest;
 use App\Http\Controllers\Controller;
+use Mockery\Exception;
 
 
 class PostController extends Controller
 {
     protected $postFields = [
-        "slug" => "",
+        "id" => 0,
         "title" => "",
+        "slug" => "",
         "content_raw" => "",
         "is_draft" => 1,
+    ];
+
+    protected $postUpdateFields = [
+        "title" => "",
+        "content_raw" => "",
     ];
 
     protected $publishFields = [
@@ -35,7 +43,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('admin.post.index');
+        $data = [];
+        foreach($this->postFields as $field => $default) {
+            $data[$field] = old($field, $default);
+        }
+        return view('admin.post.index', $data);
     }
 
     /**
@@ -45,7 +57,11 @@ class PostController extends Controller
      */
     public function create()
     {
-
+        $data = [];
+        foreach($this->postFields as $field => $default) {
+            $data[$field] = old($field, $default);
+        }
+        return view('admin.post.index', $data);
     }
 
     /**
@@ -59,15 +75,47 @@ class PostController extends Controller
         //
     }
 
-    public function ajaxStore(PostAjaxStoreRequest $request)
+    public function ajaxStore(PostAjaxStoreRequest $request, $id)
     {
-        $post = new Post();
-        foreach (array_keys($this->postFields) as $field) {
-            $post->$field = $request->get($field);
-        }
-        $markdown = new Markdowner();
-        $post->content_html = $markdown->toHTML($post->content_raw);
+        try {
+            $_exist = true; // 判断文章是不是
+            if ($id != 0) {
+                $post = Post::where('id', $id)->first();
+                if ($post == null) {
+                    $_exist = false;
+                }
+            } else {
+                $_exist = false;
+            }
 
+            if (!$_exist) {
+                $post = new Post();
+                foreach (array_keys($this->postFields) as $field) {
+                    $post->$field = $request->get($field);
+                }
+                $post->slug = $this->setUniqueSlug($post->slug, 0);
+            } else {
+                foreach (array_keys($this->postUpdateFields) as $field) {
+                    $post->$field = $request->get($field);
+                }
+            }
+
+            $post->save();
+
+            return response()->json(['post_id' => $post->id]);
+        } catch (Exception $e) {
+            return response()->json(['post_id' => 0, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    private function setUniqueSlug($slug, $extra)
+    {
+        $result = $slug . '-'. $extra;
+        if (Post::whereSlug($result)->exists()) {
+            $extra = $extra + 1;
+            return $this->setUniqueSlug($slug, $extra);
+        }
+        return $result;
     }
 
     /**

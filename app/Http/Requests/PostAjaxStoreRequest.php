@@ -22,9 +22,8 @@ class PostAjaxStoreRequest extends Request
     public function rules()
     {
         return [
-            "slug" => "require | unique:posts,slug",
-            "title" => "require",
-            "content_raw" => "require"
+            "title" => "required",
+            "content_raw" => "required"
         ];
     }
 }

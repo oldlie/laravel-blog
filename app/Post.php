@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\Markdowner;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -16,11 +17,7 @@ class Post extends Model
     public function setTitleAttribute($value)
     {
         $this->attributes['title'] = $value;
-
-        if (! $this->exists) {
-            //$this->attributes['slug'] = str_slug($value);
-            $this->setUniqueSlug($value, '');
-        }
+        //$this->setUniqueSlug($value, '');
     }
 
     /**
@@ -28,18 +25,19 @@ class Post extends Model
      *
      * @param string $title
      * @param mixed $extra
-     */
-    protected function setUniqueSlug($title, $extra)
+    protected function setSlug($title, $extra)
     {
-        $slug = str_slug($title.'-'.$extra);
+        //$slug = str_slug($title.'-'.$extra);
+        //$slug = replaceall
 
         if (static::whereSlug($slug)->exists()) {
-            $this->setUniqueSlug($title, $extra + 1);
+            $this->setSlug($title, $extra + 1);
             return;
         }
 
         $this->attributes['slug'] = $slug;
     }
+     * */
 
     /**
      * Set the HTML content automatically when the raw content is set

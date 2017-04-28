@@ -45,8 +45,9 @@
       <div class="col-sm-12">
           <div class="box box-primary collapsed-box">
               <div class="box-header with-border box-primary">
-                  <input id="titleTxt" type="text" class="post-input post-title" placeholder="标题：请只输入数字，字母，汉字以及空格">
-                  <input id="slugTxt" type="text" readonly class="post-input" placeholder="文章 URL，根据标题自动生成">
+                  <input type="hidden" id="idTxt" value="{{$id}}"/>
+                  <input id="titleTxt" value="{{$title}}" type="text"class="post-input post-title" placeholder="标题：请只输入数字，字母，汉字以及空格">
+                  <input type="hidden" value="{{$slug}}" id="slugTxt" />
               </div>
           </div>
       </div>
@@ -64,7 +65,8 @@
                       <button id="columnChangeBtn" class="btn btn-sm btn-default"><i class="fa fa-columns"></i></button>
                       <button class="btn btn-sm btn-primary saveDraftBtn"><i class="fa fa-save"></i></button>
                   </div>
-<textarea id="input">
+<textarea id="input">@if ($id == 0)
+
 # 一级标题
 ## 二级标题
 ### 三级标题
@@ -96,6 +98,8 @@ _或者用下划线来倾斜_
 
 ***
 
+#### 表格
+
 dog | bird | cat
 ----|:----:|----:
 foo | foo | foo
@@ -110,7 +114,10 @@ baz | baz | baz
 ```
 行内代码用 ` int sum = b + c `
 ```
+ @else
+    {{$content_raw}}
 
+    @endif
 </textarea>
               </div>
               <!-- /.box-body -->
@@ -131,7 +138,7 @@ baz | baz | baz
 
       <div class="col-sm-12">
           <div class="btn-group">
-              <button class="btn btn-default"><i class="fa fa-save"></i> 保存草稿</button>
+              <button class="btn btn-default saveDraftBtn"><i class="fa fa-save"></i> 保存草稿</button>
               <button class="btn btn-primary">发布文章</button>
           </div>
       </div>
@@ -184,7 +191,7 @@ baz | baz | baz
         var preview = 2;
         var callOut = new CallOut("#call-out");
 
-        $(document).on('keyup', '#titleTxt', function () {
+        $(document).on('keyup', '#titleTxt', function() {
             $('#slugTxt').val($(this).val().replace(/\s/g, "-"));
         });
 
@@ -259,7 +266,22 @@ baz | baz | baz
                 callOut.warning("保存文字内容之前请输入文章标题。");
                 return void(0);
             }
+            var id = $('#idTxt').val();
+            var data = {
+                _token: '{{csrf_token()}}',
+                title: $('#titleTxt').val(),
+                slug: $('#slugTxt').val(),
+                content_raw: $('#input').val(),
+                is_draft: 1
+            };
 
+            $.post('{{url('admin/ajax/post/store/')}}' + "/" + id, data, function(json) {
+                console.log(json);
+                if (json.post_id > 0) {
+                    $('#idTxt').val(json.post_id);
+                    callOut.success("草稿已经保存");
+                }
+            }, 'json')
         });
     </script>
     <script type="text/javascript">
