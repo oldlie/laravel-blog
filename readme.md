@@ -14,6 +14,24 @@ npm install -g bower
 然后执行  ``` composer updat ``` 命令安装 PHP 相关依赖。
 因为要修改数据库还要执行 ``` composer require "doctrine/dbal" ``` 安装相关依赖
 
+执行 ``` php artisan key:generate ``` 生成一个key,并放到 config/app.php
+```
+     /*
+     |--------------------------------------------------------------------------
+     | Encryption Key
+     |--------------------------------------------------------------------------
+     |
+     | This key is used by the Illuminate encrypter service and should be set
+     | to a random, 32 character string, otherwise these encrypted strings
+     | will not be safe. Please do this before deploying an application!
+     |
+     */
+
+     'key' => env('APP_KEY', '9mOVonC90AZMOTcZNSgyZ3YOcmKn05CR'),
+
+     'cipher' => 'AES-256-CBC',
+ ```
+
 ****
 
 当前阶段参考 [博客系列](http://laravelacademy.org/tutorials/blog)

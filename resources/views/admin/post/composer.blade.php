@@ -66,7 +66,6 @@
                       <button class="btn btn-sm btn-primary saveDraftBtn"><i class="fa fa-save"></i></button>
                   </div>
 <textarea id="input">@if ($id == 0)
-
 # 一级标题
 ## 二级标题
 ### 三级标题
@@ -114,11 +113,8 @@ baz | baz | baz
 ```
 行内代码用 ` int sum = b + c `
 ```
- @else
-    {{$content_raw}}
+ @else{{$content_raw}}@endif</textarea>
 
-    @endif
-</textarea>
               </div>
               <!-- /.box-body -->
           </div>
@@ -139,7 +135,7 @@ baz | baz | baz
       <div class="col-sm-12">
           <div class="btn-group">
               <button class="btn btn-default saveDraftBtn"><i class="fa fa-save"></i> 保存草稿</button>
-              <button class="btn btn-primary">发布文章</button>
+              <button id="publishBtn" class="btn btn-primary">发布文章</button>
           </div>
       </div>
   </section>
@@ -282,6 +278,16 @@ baz | baz | baz
                     callOut.success("草稿已经保存");
                 }
             }, 'json')
+        });
+
+        $(document).on('click', '#publishBtn', function () {
+            var id = Number($('#idTxt').val());
+            if (id <= 0) {
+                callOut.warning("请先保存文章到草稿。")
+                return;
+            }
+
+            window.location.href = "{{url('admin/post/publish')}}" + "/" + id.toString();
         });
     </script>
     <script type="text/javascript">

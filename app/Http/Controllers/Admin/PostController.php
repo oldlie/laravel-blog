@@ -28,10 +28,11 @@ class PostController extends Controller
     ];
 
     protected $publishFields = [
+        "id" => 0,
+        "title" => "",
         "author" => "",
         "publisher" => "",
         "editor" => "",
-        "proof-reader" => "",
         "category" => 0,
         "is_draft" => 0,
     ];
@@ -47,21 +48,12 @@ class PostController extends Controller
         foreach($this->postFields as $field => $default) {
             $data[$field] = old($field, $default);
         }
-        return view('admin.post.index', $data);
+        return view('admin.post.composer', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        $data = [];
-        foreach($this->postFields as $field => $default) {
-            $data[$field] = old($field, $default);
-        }
-        return view('admin.post.index', $data);
+
     }
 
     /**
@@ -129,15 +121,10 @@ class PostController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $data = Post::findOrFail($id);
+        return view('admin.post.composer', $data);
     }
 
     /**
@@ -161,5 +148,24 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function publish($id)
+    {
+        $post = Post::findOrFail($id);
+        $data = ['id' => $id];
+        foreach (array_keys($this->publishFields) as $field) {
+            $data[$field] = old($field, $post->$field);
+        }
+        return view('admin.post.publish', $data);
+    }
+
+    public function postAjaxList($category) {
+        $posts = Post::where('category', $category)
+            ->orderBy('published_at', 'desc')
+            ->paginate(config('blog.posts_per_page'));
+
+        return response()->json($posts);
     }
 }

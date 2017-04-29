@@ -11,7 +11,7 @@
 |
 
 如果使用nginx配置路由出现404解决办法：
-在location里面加上　try_files $uri $uri/ /index.blade.php?$query_string;
+在location里面加上　try_files $uri $uri/ /composer.blade.php?$query_string;
 http://blog.csdn.net/sunxiang_520/article/details/51633837
 */
 
@@ -35,6 +35,8 @@ $router->group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
 
     resource('admin/post', 'PostController');
     post('admin/ajax/post/store/{id}', "PostController@ajaxStore");
+    get('admin/post/publish/{id}', "PostController@publish");
+    get('admin/ajax/post/list/{category}', "PostController@postAjaxList");
 
     resource('admin/tag', 'TagController');
 
