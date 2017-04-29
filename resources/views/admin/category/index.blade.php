@@ -42,13 +42,13 @@
                 <div class="box box-primary">
 
                     <div class="box-header with-border">
-                        <h3 class="box-title" id="postListTitle">顶级栏目</h3>
+                        <h3 class="box-title" id="postListTitle">草稿箱</h3>
                     </div>
 
                     <div class="box-body no-padding">
                         <div class="table-responsive mailbox-messages">
                             <table class="table table-hover table-striped">
-                                <tbody>
+                                <tbody id="postList">
                                 <tr>
                                     <td><input type="checkbox"></td>
                                     <td>
@@ -73,13 +73,23 @@
 
 @section('scripts')
     <script type="text/javascript" src="{{asset('assets/js/category.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/js/posts.js')}}"></script>
     <script type="text/javascript">
         var category = new Category();
         category.url = '{{url('admin/category/parent')}}';
 
+        var post = new Post();
+        post.url = '{{url('admin')}}';
+
         $(function() {
             category.currentId = 1;
             category.render('#categoriesList');
+
+            post.list('{{url("admin/ajax/post/list")}}', 0, 1, function (json) {
+                console.info('render:');
+                console.log(json);
+                post.render('#postList', json);
+            });
         });
 
         // region Event: 栏目选择事件
