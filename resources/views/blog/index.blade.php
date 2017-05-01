@@ -8,7 +8,7 @@
             <section class="col-sm-12 col-md-8 content">
 
                 <div class="row">
-                    <div class="hidden-sm col-md-12">
+                    <div class="hidden-sm hidden-xs col-md-12">
                         <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                             <ol class="carousel-indicators">
                                 <li data-target="#carousel-example-generic" data-slide-to="0" class=""></li>

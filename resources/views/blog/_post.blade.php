@@ -1,7 +1,7 @@
 
     <div class="row" style="padding: 5px 0;">
         <div class="col-xs-12 col-sm-4  col-md-3">
-            <img class="img-responsive"
+            <img class="img-responsive" style="margin: 0 0 3px 0"
                  src="{{url('uploads/images/posts/title') . '/' . $post->page_image}}"
                  alt="{{$post->title}}">
         </div>
