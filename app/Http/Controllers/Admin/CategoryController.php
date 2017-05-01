@@ -14,7 +14,7 @@ class CategoryController extends Controller
 {
     protected $fields = [
         'name' => '',
-        'parent_id' => 1,
+        'parent_id' => 0,
         'parent_name' => '顶级栏目',
         'image' => '',
         'order' => 0,
@@ -57,7 +57,7 @@ class CategoryController extends Controller
         }
         $cate->save();
 
-        $parent_cate = Categories::findOrFail($cate->parent_id);
+        $parent_cate = Categories::find($cate->parent_id);
         if ($parent_cate) {
             $parent_cate->child_count++;
             $parent_cate->save();
@@ -114,11 +114,18 @@ class CategoryController extends Controller
     public function listCategory($id)
     {
         try {
-            $category = Categories::where('id', $id)->first();
+            $category = Categories::find($id);
+            if ($category) {
+                $parent = Categories::find($category->parent_id);
+            } else {
+                $parent = null;
+            }
+
         } catch(NotFoundHttpException $e) {
             $category = "";
         }
+
         $children = Categories::where('parent_id', (int)$id)->get();
-        return \response()->json(["self" => $category, "list" => $children]);
+        return \response()->json(["self" => $category, "parent" => $parent, "list" => $children]);
     }
 }

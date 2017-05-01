@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\Markdowner;
 
 use App\Http\Requests\PostAjaxStoreRequest;
+use App\Http\Requests\PostStoreRequest;
 use App\Http\Controllers\Controller;
 use Mockery\Exception;
 
@@ -30,10 +31,13 @@ class PostController extends Controller
     protected $publishFields = [
         "id" => 0,
         "title" => "",
+        "subtitle" => "",
         "author" => "",
         "publisher" => "",
         "editor" => "",
         "category" => 0,
+        "page_image" => "",
+        "meta_description" => "",
         "is_draft" => 0,
     ];
 
@@ -56,15 +60,17 @@ class PostController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(PostStoreRequest $request)
     {
-        //
+        $id = $request->get('id');
+        $post = Post::findOrFail($id);
+        foreach (array_keys($this->publishFields) as $filed) {
+            $post->$filed = $request->get($filed);
+        }
+        $post->published_at = Carbon::now();
+        $post->save();
+        return redirect('admin/post/publish/' . $id)->withSuccess('文章已经发布了。');
     }
 
     public function ajaxStore(PostAjaxStoreRequest $request, $id)
@@ -147,7 +153,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Post::destroy($id);
+        return redirect('admin/category')
+            ->withSuccess('文章已经删除了。');
     }
 
 

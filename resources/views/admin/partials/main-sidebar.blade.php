@@ -14,8 +14,8 @@
             </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                    <li class="active"><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                    <li><a href="{{action('Admin\DashboardController@index')}}"><i class="fa fa-circle-o"></i> Dashboard</a></li>
+                    <li><a href="{{action('Admin\DashboardController@subtitle')}}"><i class="fa fa-circle-o"></i> 设置展示的栏目</a></li>
                 </ul>
             </li>
             <li class="treeview">

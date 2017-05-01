@@ -21,7 +21,9 @@ Route::get('/', function () {
 });
 
 Route::get('blog', 'BlogController@index');
-Route::get('blog/{slug}', 'BlogController@showPost');
+Route::get('blog/list/{category}', 'BlogController@showMore');
+Route::get('blog/detail/{slug}', 'BlogController@showPost');
+
 
 Route::get('admin', function () {
     return redirect('/admin/dashboard');
@@ -32,6 +34,9 @@ $router->group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
         return redirect('/admin/dashboard');
     });
     get('admin/dashboard', 'DashboardController@index');
+    get('admin/subtitle', 'DashboardController@subtitle');
+    post('admin/subtitle', 'DashboardController@subtitleStore');
+    delete('admin/subtitle/{id}', 'DashboardController@subtitleDelete');
 
     resource('admin/post', 'PostController');
     post('admin/ajax/post/store/{id}', "PostController@ajaxStore");

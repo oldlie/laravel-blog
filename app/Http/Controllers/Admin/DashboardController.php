@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Categories;
+use App\SubCategories;
+use App\Subtitle;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -9,79 +12,35 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         return view('admin.dashboard.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function subtitle()
     {
-        //
+        $data = SubCategories::all();
+        return view('admin.dashboard.subtitle', compact('data'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function subtitleStore(Request $request)
     {
-        //
+        $id = $request->get('id');
+        $category = Categories::findOrFail($id);
+
+        $sub_category = new SubCategories();
+        $sub_category->title = $category->name;
+        $sub_category->category = $category->id;
+        $sub_category->save();
+
+        return redirect("/admin/subtitle")
+            ->withSuccess("已经添加。");
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function subtitleDelete($id) {
+        SubCategories::destroy($id);
+        return redirect("/admin/subtitle")
+            ->withSuccess("已经修改。");
     }
 }

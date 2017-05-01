@@ -15,7 +15,7 @@ var Category = (function () {
     var tempHtml = [];
     var template = {
         back : ['<div class="btn-group" style="width: 100%; min-width: 300px">',
-            '<button type="button" class="btn btn-ms btn-default back-to-parent" data-id="{id}" ><i class="fa fa-angle-double-left"></i> </button>',
+            '<button type="button" class="btn btn-ms btn-default back-to-parent" data-id="${id}" ><i class="fa fa-angle-double-left"></i> </button>',
             '<button type="button" class="btn btn-default select-category" style="width: 220px" data-id="${id}" >${text}</button>',
             '</div>'
         ].join(''),
@@ -33,6 +33,7 @@ var Category = (function () {
         console.log(this.currentId);
         var temp = this.url + "/" + this.currentId;
         $.get(temp, function (json) {
+            console.log(json);
             $(targetElement).html(category.draw(json));
         }, "json");
     };

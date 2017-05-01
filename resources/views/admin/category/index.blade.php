@@ -75,14 +75,16 @@
     <script type="text/javascript" src="{{asset('assets/js/category.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/js/posts.js')}}"></script>
     <script type="text/javascript">
+        var _token = '{{csrf_token()}}';
+
         var category = new Category();
         category.url = '{{url('admin/category/parent')}}';
 
         var post = new Post();
-        post.url = '{{url('admin')}}';
+        post.url = '{{url('/')}}';
 
         $(function() {
-            category.currentId = 1;
+            category.currentId = 0;
             category.render('#categoriesList');
 
             post.list('{{url("admin/ajax/post/list")}}', 0, 1, function (json) {
@@ -99,6 +101,13 @@
                 category.render('#categoriesList');
             });
             $(document).on('click', '.select-category', function() {
+                $('#postListTitle').text($(this).text());
+                var category = $(this).attr('data-id');
+                post.list('{{url("admin/ajax/post/list")}}', category, 1, function (json) {
+                    console.info('render:');
+                    console.log(json);
+                    post.render('#postList', json);
+                });
             });
             $(document).on('click', '.go-to-children', function() {
                 category.currentId = $(this).attr('data-id');

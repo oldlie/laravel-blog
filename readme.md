@@ -11,7 +11,7 @@ npm install gulp-rename --save
 npm install -g bower
 ```
 
-然后执行  ``` composer updat ``` 命令安装 PHP 相关依赖。
+然后执行  ``` composer update ``` 命令安装 PHP 相关依赖。
 因为要修改数据库还要执行 ``` composer require "doctrine/dbal" ``` 安装相关依赖
 
 执行 ``` php artisan key:generate ``` 生成一个key,并放到 config/app.php

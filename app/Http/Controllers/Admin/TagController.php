@@ -94,14 +94,7 @@ class TagController extends Controller
 
         return view('admin.tag.edit', $data);
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  App\Http\Requests\TagUpdateRequest $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(TagUpdateRequest $request, $id)
     {
         $tag = Tag::findOrFail($id);
