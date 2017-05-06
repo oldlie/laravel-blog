@@ -45,7 +45,9 @@
 
   @include('admin.partials.main-header')
 
+    @if (Auth::check())
     @include('admin.partials.main-sidebar')
+    @endif
 
   <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">

@@ -16,10 +16,12 @@
         </a>
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
+            @if (Auth::check())
             <ul class="nav navbar-nav">
                 <li><a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a></li>
                 <li><a href="{{url('/auth/logout')}}"><i class="fa fa-sign-out"></i></a></li>
             </ul>
+            @endif
         </div>
 
     </nav>

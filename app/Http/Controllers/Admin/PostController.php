@@ -52,7 +52,7 @@ class PostController extends Controller
         foreach($this->postFields as $field => $default) {
             $data[$field] = old($field, $default);
         }
-        return view('admin.post.composer', $data);
+        return view('admin.post.ueditor', $data);
     }
 
     public function create()
@@ -130,7 +130,7 @@ class PostController extends Controller
     public function edit($id)
     {
         $data = Post::findOrFail($id);
-        return view('admin.post.composer', $data);
+        return view('admin.post.ueditor', $data);
     }
 
     /**
