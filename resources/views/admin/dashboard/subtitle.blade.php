@@ -28,23 +28,19 @@
 
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
-                            <?php $is_over = false;?>
-
                             @for($i = 0; $i < count($data); $i++)
                                 @if ($i > 3)
-                                    @if (!$is_over)
                                         <li class="dropdown">
                                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                Dropdown <span class="caret"></span>
+                                                更多 <span class="caret"></span>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                @endif
+                                                @for(; $i < count($data); $i++)
                                                 <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="tab"
                                                                            href="#tab_{{$data[$i]->id}}">{{$data[$i]->title}}</a></li>
-                                                @if (!$is_over)
+                                                @endfor
                                             </ul>
                                         </li>
-                                    @endif
                                 @else
                                     <li @if($i == 0) {{'class=active'}} @endif><a href="#tab_{{$data[$i]->id}}" data-toggle="tab">{{$data[$i]->title}}</a></li>
                                 @endif

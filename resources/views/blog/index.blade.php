@@ -57,19 +57,17 @@
 
                                 @for($i = 0; $i < count($categories); $i++)
                                     @if ($i > 3)
-                                        @if (!$is_over)
-                                            <li class="dropdown">
-                                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                    更多 <span class="caret"></span>
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    @endif
-                                                    <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="tab"
-                                                                               href="#tab_{{$categories[$i]->id}}">{{$categories[$i]->title}}</a></li>
-                                                    @if (!$is_over)
-                                                </ul>
-                                            </li>
-                                        @endif
+                                        <li class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                                更多 <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                @for(; $i < count($categories); $i++)
+                                                <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="tab"
+                                                                           href="#tab_{{$categories[$i]->id}}">{{$categories[$i]->title}}</a></li>
+                                                @endfor
+                                            </ul>
+                                        </li>
                                     @else
                                         <li><a href="#tab_{{$categories[$i]->id}}" data-toggle="tab">{{$categories[$i]->title}}</a></li>
                                     @endif
