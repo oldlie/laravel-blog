@@ -22,13 +22,21 @@ class BlogController extends Controller
         $data = array('msg'=> 'hello');
 
         $show_categories = SubCategories::all();
+
         foreach ($show_categories as $category) {
             $category->posts =
                 Post::where('category', $category->category)
-                    ->where('is_draft', 1)
+                    ->where('is_draft', 0)
                     ->orderBy('published_at', 'desc')
                     ->get();
         }
+
+        $latest_posts = Post::where('is_draft', 0)
+            ->orderBy('published_at', 'desc')
+            ->take(config('blog.posts_per_page'))
+            ->get();
+
+        $data['latest'] = $latest_posts;
         $data['categories'] = $show_categories;
 
         return view('blog.index', $data);
@@ -46,14 +54,27 @@ class BlogController extends Controller
     {
         $data = [];
 
-        $category = Categories::findOrFail($category_id);
-        $data['category'] = $category;
+        if ($category_id == 0) {
+            $category = new Categories();
+            $category->title = '最新';
+            $data['category'] = $category;
 
-        $posts = Post::where('category', $category_id)
-            ->where('is_draft', 1)
-            ->orderBy('published_at', 'desc')
-            ->paginate(config('blog.posts_per_page'));
-        $data['posts'] = $posts;
+            $posts = Post::where('is_draft', 0)
+                ->orderBy('published_at', 'desc')
+                ->paginate(config('blog.posts_per_page'));
+            $data['posts'] = $posts;
+        } else {
+            $category = Categories::findOrFail($category_id);
+            $data['category'] = $category;
+
+            $posts = Post::where('category', $category_id)
+                ->where('is_draft', 0)
+                ->orderBy('published_at', 'desc')
+                ->paginate(config('blog.posts_per_page'));
+            $data['posts'] = $posts;
+        }
+
+
 
         return view('blog.list', $data);
     }

@@ -43,7 +43,7 @@
         </div>
 
         <div class="col-sm-12">
-            <script id="container" name="content" type="text/plain">{{$content_raw}}</script>
+            <script id="container" name="content" type="text/html"></script>
         </div>
 
         <div class="col-sm-12">
@@ -58,9 +58,77 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript" src="{{asset('assets/ueditor/ueditor.cinfig.js')}}"></script>
-    <script type="text/javascript" src="{{asset('assets/ueditor/ueditor.all.js')}}"></script>
+    <script type="text/javascript" src="{{url('ueditor/ueditor.config.js')}}"></script>
+    <script type="text/javascript" src="{{url('ueditor/ueditor.all.js')}}"></script>
     <script type="text/javascript">
-        var ue = UE.getEditor('container');
+        var callOut = new CallOut('#callOut');
+        var ue = UE.getEditor('container', {
+            autoHeight: false
+        });
+        ue.ready(function() {
+            //设置编辑器的内容
+            ue.setContent('{!! $content_raw !!}');
+        });
+
+        /**
+         * set slug title
+         */
+        $(document).on('change', '#titleTxt', function () {
+            $('#slugTxt').val($(this).val());
+        });
+
+        /**
+         * save draft
+         */
+        $(document).on('click', '.saveDraftBtn', function () {
+            saveDraft(function (json) {
+                console.log(json);
+                if (json.post_id > 0) {
+                    $('#idTxt').val(json.post_id);
+                    callOut.success("草稿已经保存");
+                }
+            });
+        });
+        
+        function saveDraft(callBack) {
+            console.log('save draft.');
+            var title = $('#titleTxt').val();
+            if (title === "") {
+                callOut.warning("保存文字内容之前请输入文章标题。");
+                return void(0);
+            }
+
+            var id = $('#idTxt').val();
+            var data = {
+                _token: '{{csrf_token()}}',
+                title: $('#titleTxt').val(),
+                slug: $('#slugTxt').val(),
+                content_raw: ue.getContent(),
+                is_draft: 1
+            };
+
+            $.post('{{url('admin/ajax/post/store/')}}' + "/" + id, data, function(json) {
+                if (callBack != null) {
+                    callBack(json);
+                }
+            }, 'json')
+        }
+
+        /**
+         * publish article
+         */
+        $(document).on('click', '#publishBtn', function () {
+            var id = Number($('#idTxt').val());
+            if (id <= 0) {
+                callOut.warning("请先保存文章到草稿。")
+                return;
+            }
+            saveDraft(function (json) {
+                console.log(json);
+                if (json.post_id > 0) {
+                    window.location.href = "{{url('admin/post/publish')}}" + "/" + json.post_id.toString();
+                }
+            });
+        });
     </script>
 @stop

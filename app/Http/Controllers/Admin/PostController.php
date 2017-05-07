@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Categories;
 use App\Post;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Services\Markdowner;
 use App\Http\Requests\PostAjaxStoreRequest;
 use App\Http\Requests\PostStoreRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
 
 
@@ -64,10 +66,17 @@ class PostController extends Controller
     public function store(PostStoreRequest $request)
     {
         $id = $request->get('id');
+
+        $category_id = $request->get('category');
+        if ($category_id == 0) {
+            return redirect('admin/post/publish/' . $id)->withErrors('需要给即将发布的文章指定一个类别。');
+        }
+
         $post = Post::findOrFail($id);
         foreach (array_keys($this->publishFields) as $filed) {
             $post->$filed = $request->get($filed);
         }
+
         $post->published_at = Carbon::now();
         $post->save();
         return redirect('admin/post/publish/' . $id)->withSuccess('文章已经发布了。');
@@ -153,9 +162,16 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        Post::destroy($id);
-        return redirect('admin/category')
-            ->withSuccess('文章已经删除了。');
+        $post = Post::findOrFail($id);
+        if ($post->is_draft == 1) {
+            Post::destroy($id);
+            return redirect('admin/draft')
+                ->withSuccess('文章已经删除了。');
+        } else {
+            Post::destroy($id);
+            return redirect('admin/category')
+                ->withSuccess('文章已经删除了。');
+        }
     }
 
 
@@ -166,6 +182,7 @@ class PostController extends Controller
         foreach (array_keys($this->publishFields) as $field) {
             $data[$field] = old($field, $post->$field);
         }
+        $data["user"] = Auth::user();
         return view('admin.post.publish', $data);
     }
 

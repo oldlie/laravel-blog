@@ -1,5 +1,13 @@
 @extends('admin.layout')
 
+@section('styles')
+    <style>
+        .required-input {
+            border-left: 3px solid #d9534f;
+        }
+    </style>
+@stop
+
 @section('content')
 
     <!-- Content Header (Page header) -->
@@ -44,26 +52,26 @@
 
                         <div class="form-group">
                             <label for="authorTxt">作者:</label>
-                            <input name="author" type="text" class="form-control" id="authorTxt" value="{{$author}}">
+                            <input name="author" type="text" class="form-control required-input" id="authorTxt" value="{{$author}}">
                         </div>
 
                         <div class="form-group">
                             <label for="publisherTxt">发布者:</label>
-                            <input name="publisher" type="text" class="form-control" id="publisherTxt" value="{{$publisher}}">
+                            <input name="publisher" type="text" class="form-control required-input" id="publisherTxt" value="{{$publisher == "" ? $user->name : $publisher}}">
                         </div>
 
 
                         <div class="form-group">
                             <label for="editorTxt">编辑:</label>
-                            <input name="editor" type="text" class="form-control" id="editorTxt" value="{{$editor}}">
+                            <input name="editor" type="text" class="form-control required-input" id="editorTxt" value="{{$editor == "" ? $user->name : $editor}}">
                         </div>
 
                         <div class="form-group">
                             <button class="btn btn-default" type="button"
                                     data-toggle="modal" data-target="#selectParentIDModal">选择类型</button>
-                            <input type="text" class="form-control" readonly value="顶级栏目" id="categoryNameTxt">
+                            <input type="text" class="form-control required-input" readonly value="顶级栏目" id="categoryNameTxt">
                             <input type="hidden" value="{{$category}}" name="category" id="categoryIdTxt">
-                            <input type="hidden" name="is_draft" value="1">
+                            <input type="hidden" name="is_draft" value="0">
                             <input type="hidden" name="id" value="{{$id}}">
 
                         </div>
@@ -90,7 +98,7 @@
                         
                         <div class="form-group">
                             <label for="description">简要描述</label>
-                            <textarea name="meta_description" id="description" cols="30" rows="10" class="form-control">{{$meta_description}}</textarea>
+                            <textarea name="meta_description" id="description" cols="30" rows="10" class="form-control required-input">{{$meta_description}}</textarea>
                         </div>
 
                 </div>

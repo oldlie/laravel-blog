@@ -39,7 +39,8 @@
   <![endif]-->
     @yield('styles')
 </head>
-<body class="hold-transition skin-blue sidebar-mini sidebar-collapse ">
+<!--sidebar-collapse-->
+<body class="hold-transition skin-blue sidebar-mini  ">
 
 <div class="wrapper">
 

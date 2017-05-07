@@ -21,7 +21,7 @@ class CreatePostsTable extends Migration
             $table->string('author'); // 作者或者涟源
             $table->string('publisher'); // 发布者
             $table->string('editor'); // 编辑
-            $table->string('proof-reader'); // 校对
+            $table->string('proof_reader'); // 校对
             $table->integer('category');
             $table->text('content_raw');
             $table->text('content_html');
@@ -29,6 +29,7 @@ class CreatePostsTable extends Migration
             $table->string('meta_description');
             $table->boolean('is_draft');
             $table->unsignedInteger("view_count");
+            $table->boolean('is_carousel');
             $table->timestamp('published_at')->index();
             $table->timestamps();
         });

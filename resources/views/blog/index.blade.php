@@ -53,6 +53,8 @@
                     <div class="col-sm-12">
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
+                                <li class="active"><a href="#tab_0" data-toggle="tab">最新</a></li>
+
                                 <?php $is_over = false;?>
 
                                 @for($i = 0; $i < count($categories); $i++)
@@ -71,13 +73,24 @@
                                             </li>
                                         @endif
                                     @else
-                                        <li @if($i == 0) {{'class=active'}} @endif><a href="#tab_{{$categories[$i]->id}}" data-toggle="tab">{{$categories[$i]->title}}</a></li>
+                                        <li><a href="#tab_{{$categories[$i]->id}}" data-toggle="tab">{{$categories[$i]->title}}</a></li>
                                     @endif
                                 @endfor
                             </ul>
                             <div class="tab-content">
+                                <div class="tab-pane active" id="tab_0">
+                                    @foreach($latest as $post)
+                                        @include('blog._post')
+                                    @endforeach
+
+                                        <div class="row" style="padding: 5px 0;">
+                                            <div class="col-sm-12">
+                                                <a href="{{action('BlogController@showMore', ['category' => 0])}}" class="btn btn-primary btn-block">查看更多...</a>
+                                            </div>
+                                        </div>
+                                </div>
                                 @for($i = 0; $i < count($categories); $i++)
-                                    <div class="tab-pane @if($i == 0) {{'active'}} @endif" id="tab_{{$categories[$i]->id}}">
+                                    <div class="tab-pane " id="tab_{{$categories[$i]->id}}">
 
                                         @foreach($categories[$i]->posts as $post)
                                             @include('blog._post')
