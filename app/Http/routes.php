@@ -43,6 +43,8 @@ $router->group(['namespace' => 'Admin', 'middleware' => 'auth'], function () {
     get('admin/post/publish/{id}', "PostController@publish");
     get('admin/ajax/post/list/{category}', "PostController@postAjaxList");
 
+    resource('admin/carousel', 'CarouselController');
+    resource('admin/navigation', 'MainNavigateController');
     resource('admin/draft', 'DraftController');
     resource('admin/tag', 'TagController');
 

@@ -5,24 +5,19 @@ namespace App\Http\Controllers;
 use App\Categories;
 use App\Post;
 use App\SubCategories;
-use Carbon\Carbon;
+use App\MainNavigation;
 
 class BlogController extends Controller
 {
     public function index()
     {
-        /*
-        $posts = Post::where('published_at', '<=', Carbon::now())
-            ->orderBy('published_at', 'desc')
-            ->paginate(config('blog.posts_per_page'));
+        $data = [];
+        $data['links'] = $this->buildCategories(0);
+        $data['urls'] = MainNavigation::orderBy('order', 'asc')->get();
 
-        return view('blog.index', compact('posts'));
-        */
-
-        $data = array('msg'=> 'hello');
+        $data['carousels'] = Post::where('is_carousel', 1)->get();
 
         $show_categories = SubCategories::all();
-
         foreach ($show_categories as $category) {
             $category->posts =
                 Post::where('category', $category->category)
@@ -42,17 +37,46 @@ class BlogController extends Controller
         return view('blog.index', $data);
     }
 
+    private function buildCategories($id)
+    {
+        $result = Categories::where('parent_id', $id)->get();
+        /*
+        foreach ($result as $item) {
+            if ($item->child_count>0) {
+                $this->buildCategory($item);
+            }
+        }*/
+        return $result;
+    }
+
+    private function buildCategory($data)
+    {
+        $data->children = Categories::where('parent_id', $data->id)->get();
+        foreach ($data->children as $item) {
+            if ($item->child_count>0) {
+                $this->buildCategory($item->id, $item);
+            }
+        }
+    }
+
     public function showPost($slug)
     {
+        $data = [];
+        $data['links'] = $this->buildCategories(0);
+        $data['urls'] = MainNavigation::orderBy('order', 'asc')->get();
+
         $post = Post::whereSlug($slug)->firstOrFail();
         $post->view_count++;
         $post->save();
-        return view('blog.post')->withPost($post);
+        $data['post'] = $post;
+        return view('blog.post', $data);
     }
 
     public function showMore($category_id)
     {
         $data = [];
+        $data['links'] = $this->buildCategories(0);
+        $data['urls'] = MainNavigation::orderBy('order', 'asc')->get();
 
         if ($category_id == 0) {
             $category = new Categories();
